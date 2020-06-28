@@ -1,0 +1,23 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t supertam/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true supertam/react-test npm test
+
+after_success:
+  - docker build -t supertam/multi-client ./client
+  - docker build -t supertam/multi-nginx ./nginx
+  - docker build -t supertam/multi-server ./server
+  - docker build -t supertam/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push supertam/multi-client
+  - docker push supertam/multi-nginx
+  - docker push supertam/multi-server
+  - docker push supertam/multi-worker
