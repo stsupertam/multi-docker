@@ -21,3 +21,15 @@ after_success:
   - docker push supertam/multi-nginx
   - docker push supertam/multi-server
   - docker push supertam/multi-worker
+
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-east-2-280735133974
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
